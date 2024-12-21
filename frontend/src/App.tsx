@@ -12,12 +12,12 @@ const App = () => {
         <AppToolBar/>
       </header>
       <Container maxWidth="xl" component="main">
-            <Routes>
-              <Route path="/" element={<Posts />} />
-              <Route path="/posts/new" element={<NewPost />} />
-              <Route path="/posts/:id" element={<OnePost />} />
-              <Route path="*" element={<Typography variant="h1">Page Doesn't Exist</Typography>} />
-            </Routes>
+        <Routes>
+          <Route path="/" element={<Posts/>}/>
+          <Route path="/posts/new" element={<NewPost/>}/>
+          <Route path="/posts/:id" element={<OnePost/>}/>
+          <Route path="*" element={<Typography variant="h1">Page Doesn't Exist</Typography>}/>
+        </Routes>
       </Container>
     </>
   );
