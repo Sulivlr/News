@@ -6,7 +6,7 @@ import mysqlDb from '../mysqlDb';
 
 const postsRouter = express.Router();
 
-postsRouter.get('/', async (req, res, next) => {
+postsRouter.get('/', async (_req, res, next) => {
   try {
     const connection = mysqlDb.getConnection();
     const result = await connection.query('SELECT id, title, image, created_at FROM posts');
@@ -38,24 +38,6 @@ postsRouter.get('/:id', async (req, res, next) => {
   }
 });
 
-postsRouter.delete('/:id', async (req, res, next) => {
-  try {
-    const connection = mysqlDb.getConnection();
-    const id = req.params.id;
-    const result = await connection.query('SELECT * FROM posts WHERE id = ?', [id]);
-    const posts = result[0] as Post[];
-    if (posts.length === 0) {
-      res.status(404).send({error: `No post`});
-    }
-    const deletedResult = await connection.query('DELETE FROM posts WHERE id = ?', [id]);
-    res.send(deletedResult[0]);
-
-  } catch (error) {
-    next(error);
-  }
-});
-
-
 postsRouter.post('/', imagesUpload.single('image'), async (req, res, next) => {
   try {
     if (!req.body.title || !req.body.text) {
@@ -85,6 +67,21 @@ postsRouter.post('/', imagesUpload.single('image'), async (req, res, next) => {
 
     res.send(posts[0]);
 
+  } catch (error) {
+    next(error);
+  }
+});
+
+postsRouter.delete('/:id', async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const connection = mysqlDb.getConnection();
+    const deleteResult = await connection.query('DELETE FROM posts WHERE id = ?', [id]);
+    const resultHeader = deleteResult[0] as ResultSetHeader;
+    if (resultHeader.affectedRows > 0) {
+      res.send('OK!')
+    }
+    res.status(404).send({error: 'not found'});
   } catch (error) {
     next(error);
   }
