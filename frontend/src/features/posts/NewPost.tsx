@@ -1,20 +1,19 @@
-import React, {useState} from 'react';
-import {PostMutation} from '../../types';
-import {Grid, TextField} from '@mui/material';
+import React, { useState } from 'react';
+import { PostMutation } from '../../types';
+import { Grid, TextField } from '@mui/material';
 import FileInput from "../../UI/FileInput/FileInput";
-import {LoadingButton} from "@mui/lab";
+import { LoadingButton } from "@mui/lab";
 import SaveIcon from '@mui/icons-material/SaveAs';
-import {useAppDispatch} from "../../app/hooks";
-import {createPost, fetchPosts} from "../posts/postsThunks";
-import {useNavigate} from 'react-router-dom';
-
+import { useAppDispatch } from "../../app/hooks";
+import { createPost, fetchPosts } from "../posts/postsThunks";
+import { useNavigate } from 'react-router-dom';
 
 interface Props {
   onSubmit: (mutation: PostMutation) => void;
   isLoading: boolean;
 }
 
-const MessageForm: React.FC<Props> = ({onSubmit}) => {
+const NewPost: React.FC<Props> = ({ onSubmit }) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [state, setState] = useState<PostMutation>({
@@ -28,12 +27,12 @@ const MessageForm: React.FC<Props> = ({onSubmit}) => {
     event.preventDefault();
     await dispatch(createPost(state));
     dispatch(fetchPosts());
-    onSubmit({...state});
+    onSubmit({ ...state });
     navigate('/');
   };
 
   const inputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const {name, value} = event.target;
+    const { name, value } = event.target;
     setState(prevState => ({
       ...prevState,
       [name]: value,
@@ -41,7 +40,7 @@ const MessageForm: React.FC<Props> = ({onSubmit}) => {
   };
 
   const fileInputChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const {name, files} = event.target;
+    const { name, files } = event.target;
     const value = files && files[0] ? files[0] : null;
     setState((prevState) => ({
       ...prevState,
@@ -50,11 +49,8 @@ const MessageForm: React.FC<Props> = ({onSubmit}) => {
   };
 
   return (
-
-
     <form autoComplete="off" onSubmit={formSubmit}>
       <Grid container direction="column" spacing={2}>
-
         <Grid item>
           <TextField
             id="title"
@@ -70,22 +66,10 @@ const MessageForm: React.FC<Props> = ({onSubmit}) => {
         <Grid item>
           <TextField
             id="text"
-            label="text"
+            label="Text"
             value={state.text}
             onChange={inputChange}
             name="text"
-            required
-            fullWidth
-          />
-        </Grid>
-
-        <Grid item>
-          <TextField
-            id="comment"
-            label="Comment"
-            value={state.comment}
-            onChange={inputChange}
-            name="comment"
             required
             fullWidth
           />
@@ -98,9 +82,14 @@ const MessageForm: React.FC<Props> = ({onSubmit}) => {
             onChange={fileInputChangeHandler}
           />
         </Grid>
+
         <Grid item>
-          <LoadingButton type="submit" loadingPosition="start" startIcon={<SaveIcon/>}
-                         variant="contained">
+          <LoadingButton
+            type="submit"
+            loadingPosition="start"
+            startIcon={<SaveIcon />}
+            variant="contained"
+          >
             Save
           </LoadingButton>
         </Grid>
@@ -109,4 +98,4 @@ const MessageForm: React.FC<Props> = ({onSubmit}) => {
   );
 };
 
-export default MessageForm;
+export default NewPost;
