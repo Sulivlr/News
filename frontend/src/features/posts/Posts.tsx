@@ -3,7 +3,7 @@ import {Link} from 'react-router-dom';
 import {selectPosts, selectPostsIsFetching} from './postsSlice';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
 import {useEffect} from 'react';
-import {fetchPosts} from './postsThunk';
+import {fetchPosts} from './postsThunks';
 import {API_URL} from '../../config';
 import notFoundImg from '../../assets/images/imgNotFound.jpg';
 

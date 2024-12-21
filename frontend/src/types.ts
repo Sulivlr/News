@@ -19,3 +19,10 @@ export interface Comment {
   author: string | null;
   text: string;
 }
+
+export interface PostMutation {
+  title: string;
+  text: string;
+  comment: string;
+  image: File | null;
+}

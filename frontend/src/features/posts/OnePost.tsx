@@ -1,18 +1,19 @@
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
 import {selectOnePost, selectOnePostIsFetching} from './postsSlice';
 import {useEffect} from 'react';
-import {fetchOnePost} from './postsThunk';
+import {fetchOnePost} from './postsThunks';
 import {useParams} from 'react-router-dom';
-import {CircularProgress, Divider, Grid, Paper, Typography} from '@mui/material';
+import {Button, CircularProgress, Divider, Grid, Paper, Typography} from '@mui/material';
 import {API_URL} from '../../config';
 import dayjs from 'dayjs';
-import {fetchComments} from '../comments/commentsThunks';
-import {selectComments} from '../comments/commentsSlice';
+import {deleteComment, fetchComments} from '../comments/commentsThunks';
+import {selectComments, selectIsDeleting} from '../comments/commentsSlice';
 
 const OnePost = () => {
   const dispatch = useAppDispatch();
   const post = useAppSelector(selectOnePost);
   const comments = useAppSelector(selectComments);
+  const isDeleting = useAppSelector(selectIsDeleting);
   const postIsFetching = useAppSelector(selectOnePostIsFetching);
   const {id} = useParams();
 
@@ -22,6 +23,15 @@ const OnePost = () => {
       dispatch(fetchComments(parseInt(id)));
     }
   }, [dispatch, id]);
+
+  const deleteCommentById = async (id: number) => {
+    try {
+      await dispatch(deleteComment(id)).unwrap();
+      dispatch(fetchComments());
+    } catch (error) {
+      console.error('Error deleting comment', error);
+    }
+  };
 
   return (
     <Grid container direction="column" spacing={2}>
@@ -55,16 +65,22 @@ const OnePost = () => {
           <Grid item container direction="column" spacing={1}>
             {comments.map(comment => (
               <Grid item key={comment.id}>
-                <Paper sx={{p: 1}}>
-                  <strong>
-                    {comment.author || 'Anonymous'} wrote: </strong> {comment.text}
+                <Paper sx={{ p: 1 }}>
+                  <strong>{comment.author || 'Anonymous'} wrote: </strong> {comment.text}
+                  {isDeleting === comment.id ? (
+                    <CircularProgress />
+                  ) : (
+                    <Button onClick={() => deleteCommentById(comment.id)} disabled={isDeleting === comment.id}>
+                      Delete
+                    </Button>
+                  )}
                 </Paper>
+
               </Grid>
-            ))}
+              ))}
           </Grid>
         </>
       )}
-
     </Grid>
   );
 };

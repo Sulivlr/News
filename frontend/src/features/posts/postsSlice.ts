@@ -1,12 +1,13 @@
 import {Post, PostItem} from '../../types';
 import {createSlice} from '@reduxjs/toolkit';
-import {fetchOnePost, fetchPosts} from './postsThunk';
+import {createPost, fetchOnePost, fetchPosts} from './postsThunks';
 
 export interface PostsState {
   items: PostItem[];
   fetchLoading: boolean;
   onePost: Post | null;
   onePostIsFetching: boolean;
+  createLoading: boolean;
 }
 
 const initialState: PostsState = {
@@ -14,6 +15,7 @@ const initialState: PostsState = {
   fetchLoading: false,
   onePost: null,
   onePostIsFetching: false,
+  createLoading: false,
 };
 
 export const postsSlice = createSlice({
@@ -38,12 +40,21 @@ export const postsSlice = createSlice({
     }).addCase(fetchOnePost.rejected, (state) => {
       state.onePostIsFetching = false;
     });
+
+    builder.addCase(createPost.pending, (state) => {
+      state.createLoading = true;
+    }).addCase(createPost.fulfilled, (state) => {
+      state.createLoading = false;
+    }).addCase(createPost.rejected, (state) => {
+      state.createLoading = false;
+    });
   },
   selectors: {
     selectPosts: (state) => state.items,
     selectPostsIsFetching: (state) => state.fetchLoading,
     selectOnePost: (state) => state.onePost,
     selectOnePostIsFetching: (state) => state.onePostIsFetching,
+    selectPostIsCreating: (state) => state.createLoading,
   }
 });
 
@@ -54,4 +65,5 @@ export const {
   selectPostsIsFetching,
   selectOnePost,
   selectOnePostIsFetching,
+  selectPostIsCreating,
 } = postsSlice.selectors;
